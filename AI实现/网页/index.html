@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>杭州美食推荐系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .loading {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .restaurant-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .restaurant-card:hover {
+            transform: translateY(-4px);
+        }
+        .markdown-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        .markdown-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .markdown-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .markdown-content hr {
+            margin: 1.5rem 0;
+            border-top: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">杭州美食推荐系统</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <div class="mb-6">
+                    <label for="query" class="block text-gray-700 text-sm font-bold mb-2">
+                        请描述您的需求
+                    </label>
+                    <textarea
+                        id="query"
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows="4"
+                        placeholder="例如：我想在西湖边吃杭帮菜"
+                    ></textarea>
+                </div>
+
+                <button
+                    onclick="getRecommendation()"
+                    class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+                >
+                    获取推荐
+                </button>
+
+                <div id="loading" class="loading"></div>
+            </div>
+
+            <div id="result" class="space-y-6 hidden">
+                <!-- AI推荐结果 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">AI推荐</h2>
+                    <div id="recommendation" class="markdown-content text-gray-700"></div>
+                </div>
+
+                <!-- 相似餐厅列表 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">相似餐厅</h2>
+                    <div id="similar-restaurants" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 餐厅卡片将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatPhoneNumber(phone) {
+            if (Array.isArray(phone)) {
+                return phone.length > 0 ? phone.join(', ') : '暂无';
+            }
+            return phone || '暂无';
+        }
+
+        function formatRestaurantCard(restaurant) {
+            const phone = formatPhoneNumber(restaurant.电话);
+            return `
+                <div class="restaurant-card bg-gray-50 rounded-lg p-4 shadow hover:shadow-md">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">${restaurant.店名}</h3>
+                    <div class="space-y-1 text-sm">
+                        <p><span class="font-medium">区县：</span>${restaurant.区县名称}</p>
+                        <p><span class="font-medium">商圈：</span>${restaurant.商圈}</p>
+                        <p><span class="font-medium">类型：</span>${restaurant.类型}</p>
+                        <p><span class="font-medium">地址：</span>${restaurant.地址}</p>
+                        <p><span class="font-medium">电话：</span>${phone}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function getRecommendation() {
+            const query = document.getElementById('query').value.trim();
+            if (!query) {
+                alert('请输入您的需求');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const recommendation = document.getElementById('recommendation');
+            const similarRestaurants = document.getElementById('similar-restaurants');
+
+            loading.style.display = 'block';
+            result.classList.add('hidden');
+
+            try {
+                console.log('发送请求...');
+                console.log('查询内容:', query);
+
+                const response = await fetch('http://127.0.0.1:5000/get_recommendation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ query }),
+                });
+
+                console.log('收到响应:', response.status);
+                
+                // 获取原始响应文本
+                const responseText = await response.text();
+                console.log('响应内容:', responseText);
+
+                // 尝试解析JSON
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON解析错误:', parseError);
+                    throw new Error(`JSON解析失败: ${responseText}`);
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (!data.recommendation) {
+                    throw new Error('返回数据缺少recommendation字段');
+                }
+
+                console.log('解析后的数据:', data);
+
+                // 使用marked渲染Markdown内容
+                recommendation.innerHTML = marked.parse(data.recommendation);
+
+                // 显示相似餐厅列表
+                if (Array.isArray(data.similar_restaurants)) {
+                    similarRestaurants.innerHTML = data.similar_restaurants
+                        .map(formatRestaurantCard)
+                        .join('');
+                } else {
+                    console.error('similar_restaurants不是数组:', data.similar_restaurants);
+                    similarRestaurants.innerHTML = '<p class="text-red-500">餐厅数据格式错误</p>';
+                }
+
+                result.classList.remove('hidden');
+            } catch (error) {
+                console.error('完整错误信息:', error);
+                alert(`获取推荐失败：${error.message}\n\n请查看控制台了解详细信息`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // 添加回车键触发搜索
+        document.getElementById('query').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getRecommendation();
+            }
+        });
+    </script>
+</body>
+</html> 
