@@ -1,0 +1,107 @@
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.4/axios.js"></script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浙里食光 - 浙江美食旅游路线设计与推荐系统</title>
+    <script src="../../scripts/Cesium/Cesium.js"></script>
+    <link rel="stylesheet" href="../../scripts/Cesium/Widgets/widgets.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; }
+        #cesiumContainer { width: 100vw; height: 100vh; position: relative; }
+        .top-bar {
+            position: absolute; top: 0; left: 0; width: 100%; z-index: 10;
+            background: rgba(255,255,255,0.95); display: flex; align-items: center; padding: 8px 16px;
+        }
+        .logo1 { font-weight: bold; font-size: 1.3em; margin-right: 12px; }
+        .logo2 { color: #888; font-size: 1em; margin-right: 24px; }
+        .func-buttons button { margin-right: 8px; }
+        #customInfoBox {
+            position: absolute; right: 30px; bottom: 30px; min-width: 220px; min-height: 80px;
+            background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 12px;
+            display: none; z-index: 20; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        #ImageSelect {
+            position: absolute; left: 20px; top: 70px; z-index: 12;
+            background: rgba(255,255,255,0.95); border-radius: 8px; padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+        #MapMark {
+            position: absolute; left: 20px; bottom: 30px; z-index: 12;
+            background: rgba(255,255,255,0.95); border-radius: 8px; padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            min-width: 350px;
+        }
+        .Choice { cursor: pointer; border: 1px solid #eee; border-radius: 6px; padding: 4px; background: #fafafa; }
+        .Choice:hover { border-color: #409eff; background: #f0f7ff; }
+        .Pic { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+        .Describ { text-align: center; font-size: 0.95em; margin: 0; }
+        .option-btn { margin: 4px 0; }
+        /* 其他样式可根据需要补充 */
+    </style>
+</head>
+<body>
+    <div id="cesiumContainer">
+        <!-- 顶部导航栏 -->
+        <div class="top-bar">
+            <div class="logo1">浙里食光</div>
+            <div class="logo2">— 浙江美食旅游路线设计与推荐系统</div>
+            <div class="func-buttons">
+                <button id="routeAnalysis">路线分析</button>
+                <button id="overviewOfCity">城市概况</button>
+                <button id="routePointAnalysis">路线点分析</button>
+                <button id="userCollection">用户收藏</button>
+            </div>
+            <button id="flyHomeBtn" title="回到初始位置">🏠</button>
+        </div>
+        <!-- 收藏面板 -->
+        <div id="MapMark">
+            <h3 class="mark-title">用户收藏</h3>
+            <div class="mark-columns" style="display: flex; gap: 15px;">
+                <!-- 商家收藏 -->
+                <div class="mark-column" style="flex:1;">
+                    <h4>商家收藏</h4>
+                    <div class="mark-input-row" style="display:flex;flex-direction:row;gap:8px;">
+                        <input type="text" id="shopMarkName" class="mark-input" placeholder="请输入商家名称">
+                        <input type="button" id="submitShopBookmark" class="mark-btn" value="确定">
+                    </div>
+                    <ul id="shopBookmarkList" style="margin:8px 0 0 0; padding:0; list-style:none;"></ul>
+                </div>
+                <!-- 路线收藏 -->
+                <div class="mark-column" style="flex:1;">
+                    <h4>路线收藏</h4>
+                    <div class="mark-input-row" style="display:flex;flex-direction:row;gap:8px;">
+                        <input type="text" id="routeMarkName" class="mark-input" placeholder="请输入路线名称">
+                        <input type="button" id="submitRouteBookmark" class="mark-btn" value="确定">
+                    </div>
+                    <ul id="routeBookmarkList" style="margin:8px 0 0 0; padding:0; list-style:none;"></ul>
+                </div>
+            </div>
+        </div>
+        <!-- 路线规划面板 -->
+        <div id="controlPanel">
+            <div>
+                <button id="setStart">选起点</button><br>
+                <input id="startInput" placeholder="起点经纬度" readonly>
+            </div>
+            <div style="margin-top: 10px;">
+                <button id="setEnd">选终点</button><br>
+                <input id="endInput" placeholder="终点经纬度" readonly>
+            </div>
+            <div style="margin-top: 10px;">
+                <button id="confirmRoute">确定路线</button>
+            </div>
+            <div id="routeInfo" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <!-- 美食POI信息面板 -->
+        <div id="customInfoBox"></div>
+    </div>
+    <script src="app.js"></script>
+    <!-- 如需路线规划js，取消下行注释 -->
+    <!-- <script src="route.js"></script> -->
+</body>
+</html>
