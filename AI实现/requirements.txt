@@ -6,6 +6,5 @@ sentence-transformers==2.5.1
 faiss-cpu==1.8.0
 requests==2.31.0
 openpyxl==3.1.2
-
-运行app.py之前，先在python环境中安装必要的库。
-请确保使用合适的VPN，以从huggingface下载模型。
+jieba==0.42.1
+pickle-mixin==1.0.2
