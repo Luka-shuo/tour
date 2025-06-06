@@ -1,6 +1,9 @@
 from fastapi import FastAPI, File, UploadFile, Query, Body
 from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from shapely.geometry import Point, mapping
+from shapely.ops import transform
+import pyproj
 import pandas as pd
 import geopandas as gpd
 import tempfile
@@ -99,6 +102,25 @@ def get_route(
             lon, lat = map(float, pt.split(','))
             coords.extend([lon, lat])
         return JSONResponse(content=coords)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.post("/buffer")
+def buffer_point(lon: float = Body(...), lat: float = Body(...), radius: float = Body(...)):
+    try:
+        # 投影到米制平面
+        proj_wgs84 = pyproj.CRS('EPSG:4326')
+        proj_merc = pyproj.CRS('EPSG:3857')
+        project = pyproj.Transformer.from_crs(proj_wgs84, proj_merc, always_xy=True).transform
+        project_back = pyproj.Transformer.from_crs(proj_merc, proj_wgs84, always_xy=True).transform
+
+        pt = Point(lon, lat)
+        pt_m = transform(project, pt)
+        buf_m = pt_m.buffer(radius)
+        buf_wgs = transform(project_back, buf_m)
+        coords = list(buf_wgs.exterior.coords)
+        # 返回经纬度坐标数组
+        return {"coordinates": coords}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
