@@ -297,12 +297,29 @@ html, body {
     bottom: 30px;
     min-width: 220px;
     min-height: 80px;
-    background: #fff;
-    border: 1.5px solid #ff9800;
+    background: #fb8c00;         /* 与#editBox一致 */
+    border: 1.5px solid #ff9800; /* 与#editBox一致 */
     border-radius: 8px;
     padding: 12px;
     display: none;
     z-index: 20;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    max-width: 300px;
+    left:auto;
+    top: auto;
+}
+
+#editBox {
+    display:none;
+    position: absolute;
+    right: 350px;
+    bottom: 30px;
+    min-width: 220px;
+    background: #fb8c00;
+    border: 1.5px solid #ff9800;
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 30;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     max-width: 300px;
 }

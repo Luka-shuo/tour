@@ -39,6 +39,7 @@
                 <button id="overviewOfCity">城市概况</button>
                 <button id="routePointAnalysis">路线点分析</button>
                 <button id="userCollection">用户收藏</button>
+                <button id="togglePoiBtn">隐藏数据点</button>
             </div>
             <button id="flyHomeBtn" title="回到初始位置">🏠</button>
         </div>
@@ -127,7 +128,19 @@
 
         <!-- 美食POI信息面板 -->
         <div id="customInfoBox"></div>
+        <div id="editBox">
+            <h4>空间数据编辑</h4>
+            <div>缓冲区半径(m):<input id="bufferRadius" type="number" min="10" max="5000" value="200" style="width:60px;"></div>
+            <button id="toggleBufferBtn" style="margin-top:8px;">计算缓冲区</button>
+            <button id="countShopBtn" style="margin-top:8px;">计算店家数量</button>
+            <div>
+                <span id="shopCountResult" style="margin-left:8px;color:#1976d2;font-weight:bold;"></span>
+            </div>
+            <button id="showDensityBtn" style="margin-top:8px;">显示店家数量分布图</button>
+            <button id="closeEditBox" style="margin-top:8px;">关闭</button>
+        </div>
     </div>
     <script src="app.js"></script>
+    <script src="POI.js"></script>
 </body>
 </html>

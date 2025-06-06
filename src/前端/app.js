@@ -14,6 +14,7 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
     timeline: false,
     navigationHelpButton: false,
     shouldAnimate: false,
+    outline: false,
 });
 viewer._cesiumWidget._creditContainer.style.display = "none";
 
@@ -250,85 +251,6 @@ viewer.screenSpaceEventHandler.setInputAction(click => {
     pointsLayer.push(point);
     routeMode = null;
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-// ================== 美食POI展示 ==================
-const pinBuilder = new Cesium.PinBuilder();
-const infoBox = document.getElementById('customInfoBox');
-const entityInfoMap = new Map();
-let lastSelected = null;
-
-fetch('杭州餐饮POI.json')
-  .then(response => response.json())
-  .then(data => {
-    data.forEach(item => {
-      const defaultIcon = pinBuilder.fromText('🍴', Cesium.Color.RED, 32).toDataURL();
-      const highlightIcon = pinBuilder.fromText('🍴', Cesium.Color.YELLOW, 40).toDataURL();
-      const entity = viewer.entities.add({
-        id: Cesium.createGuid(),
-        name: item.name,
-        position: Cesium.Cartesian3.fromDegrees(item.lon, item.lat),
-        billboard: {
-          image: defaultIcon,
-          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-        }
-      });
-      entityInfoMap.set(entity.id, { item, defaultIcon, highlightIcon });
-    });
-    viewer.zoomTo(viewer.entities);
-  });
-
-viewer.screenSpaceEventHandler.setInputAction(evt => {
-  const picked = viewer.scene.pick(evt.position);
-  if (lastSelected) {
-    const info = entityInfoMap.get(lastSelected.id);
-    lastSelected.billboard.image = info.defaultIcon;
-    lastSelected = null;
-  }
-  if (Cesium.defined(picked) && picked.id) {
-    const data = entityInfoMap.get(picked.id.id);
-    if (data) {
-      picked.id.billboard.image = data.highlightIcon;
-      lastSelected = picked.id;
-      const categories = data.item.type
-        ? data.item.type.split(';').filter(Boolean).join(' / ')
-        : '未知';
-      const region = data.item.adname || '未知';
-      infoBox.innerHTML = `
-        <h3>${data.item.name}</h3>
-        <p><strong>类别：</strong>${categories}</p>
-        <p><strong>区域：</strong>${region}</p>
-        <p><strong>地址：</strong>${data.item.address}</p>
-        <p><strong>电话：</strong>${data.item.tel && data.item.tel.length ? data.item.tel : '暂无'}</p>
-      `;
-      infoBox.style.display = 'block';
-      return;
-    }
-  }
-  infoBox.style.display = 'none';
-}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-// 信息面板拖拽
-(function() {
-  let isDragging = false;
-  let startX, startY;
-  infoBox?.addEventListener('mousedown', e => {
-    isDragging = true;
-    startX = e.clientX - infoBox.offsetLeft;
-    startY = e.clientY - infoBox.offsetTop;
-    document.body.style.userSelect = 'none';
-  });
-  document.addEventListener('mousemove', e => {
-    if (isDragging) {
-      infoBox.style.left = `${e.clientX - startX}px`;
-      infoBox.style.top = `${e.clientY - startY}px`;
-    }
-  });
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    document.body.style.userSelect = '';
-  });
-})();
 
 // ================== 视角控制（如有按钮） ==================
 document.getElementById('flyHomeBtn')?.addEventListener('click', () => {
