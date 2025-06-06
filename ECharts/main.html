@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>ECharts图表</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="main.js" defer></script>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <button class="btn-group" id="control-EChartbox">ECharts图表</button>
+
+  <div id="ECharts-box">
+    <div class="btn-group" id="field-buttons">
+      <button data-field="type1">种类1</button>
+      <button data-field="type2">种类2</button>
+      <button data-field="type3">种类3</button>
+      <button data-field="adname">地区</button>
+    </div>
+
+    <div class="btn-group" id="chartType-buttons">
+      <button data-chart="pie">饼图</button>
+      <button data-chart="bar">柱状图</button>
+    </div>
+
+    <div class="btn-group" id="region-buttons">
+      <button data-region="all">总览</button>
+      <button data-region="余杭区">余杭区</button>
+      <button data-region="西湖区">西湖区</button>
+      <button data-region="拱墅区">拱墅区</button>
+      <button data-region="萧山区">萧山区</button>
+      <button data-region="临平区">临平区</button>
+      <button data-region="滨江区">滨江区</button>
+      <button data-region="上城区">上城区</button>
+    </div>
+
+    <div id="chart"></div>
+  </div>
+</body>
+</html>
