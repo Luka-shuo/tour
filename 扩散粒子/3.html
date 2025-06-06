@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Cesium圆扩散效果</title>
+    <script src="../../Cesiumapp/scripts/Cesium/Cesium.js"></script>
+  <link href="../../Cesiumapp/scripts/Cesium/Widgets/Widgets.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="cesiumContainer"></div>
+    <div class="toolbar">
+        <h3>圆扩散参数</h3>
+        <div class="input-group">
+            <label>颜色:</label>
+            <input type="text" id="circleColor" value="rgba(0,255,0,0.7)">
+        </div>
+        <div class="input-group">
+            <label>半径(米):</label>
+            <input type="number" id="circleRadius" value="50000" step="1000">
+        </div>
+        <div class="input-group">
+            <label>周期(毫秒):</label>
+            <input type="number" id="circleDuration" value="3000" step="500">
+        </div>
+        <div class="toggle-container">
+            <span class="toggle-label">点击扩散:</span>
+            <label class="toggle">
+                <input type="checkbox" id="diffusionToggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    <div class="status" id="status">点击扩散: 已启用</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
