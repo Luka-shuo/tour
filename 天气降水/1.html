@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cesium Rain Test</title>
+  <script src="../../Cesiumapp/scripts/Cesium/Cesium.js"></script>
+  <link href="../../Cesiumapp/scripts/Cesium/Widgets/Widgets.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <div class="controls">
+    <button onclick="startRain()">开始降水</button>
+    <button onclick="stopRain()">停止降水</button>
+    <button onclick="showWeatherPanel()">显示杭州天气</button>
+  </div>
+  <div class="weather" id="weather-panel">
+    <span><img src="sunny.png" alt="图片加载失败" class="icon"></span>
+    <span id="weather-word">
+      <p class="word" id="tem">--°C</p>
+      <p class="word" id="wea-E">--</p>
+      <p class="word" id="wea-C">--</p></span><br>
+    <h2 id="weather-city" class="word">杭州</h2>
+  </div>
+  <script src="ces1.js"></script>
+</body>
+</html>
