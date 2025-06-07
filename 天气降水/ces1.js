@@ -142,6 +142,7 @@ async function getHangzhouWeather() {
 
 // 显示杭州天气信息
 let weatherTimeout;
+getHangzhouWeather()
 function showWeatherPanel() {
     const panel = document.getElementById('weather-panel');
     getHangzhouWeather()
